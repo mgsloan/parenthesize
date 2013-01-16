@@ -11,7 +11,7 @@
 module HasFix.GenericUtils
   ( AnnDict(..)
   , spanInfoProxy
-  , scopedSpanProxy
+--  , scopedSpanProxy
   , annotationL
   )
 where
@@ -20,7 +20,7 @@ import Prelude hiding (id, (.))
 import Control.Category
 import Data.Lens.Common
 import Language.Haskell.Exts.Annotated
-import Language.Haskell.Modules
+-- import Language.Haskell.Modules
 import Control.Applicative
 import Data.Generics.SYB.WithClass.Derive
 import Data.Generics.SYB.WithClass.Basics
@@ -30,8 +30,8 @@ import HasFix.SrcLocUtils
 spanInfoProxy :: Proxy (AnnDict SrcSpanInfo)
 spanInfoProxy = error "proxy"
 
-scopedSpanProxy :: Proxy (AnnDict (Scoped SrcSpan))
-scopedSpanProxy  = error "proxy"
+--scopedSpanProxy :: Proxy (AnnDict (Scoped SrcSpan))
+--scopedSpanProxy  = error "proxy"
 
 deriveData (annTypes ++ notAnnTypes)
 

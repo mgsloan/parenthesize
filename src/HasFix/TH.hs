@@ -2,7 +2,7 @@
 module HasFix.TH where
 import qualified Language.Haskell.Exts.Annotated as HSE
 import Language.Haskell.Exts.Annotated (SrcSpanInfo)
-import qualified Language.Haskell.Modules as HM
+-- import qualified Language.Haskell.Modules as HM
 import Data.Lens.Common
 import Language.Haskell.TH
 
@@ -85,10 +85,10 @@ notAnnTypes =
   , ''HSE.Boxed
   , ''HSE.Tool
   , ''HSE.Comment
-  , ''HM.Scoped
-  , ''HM.Msg
-  , ''HM.MsgArg
-  , ''HM.MsgLevel
+--  , ''HM.Scoped
+--  , ''HM.Msg
+--  , ''HM.MsgArg
+--  , ''HM.MsgLevel
   ]
 
 data AnnDict l a
