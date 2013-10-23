@@ -7,6 +7,7 @@ import Control.Applicative        ((<$>), (<*>))
 import Control.Monad.Trans.Writer (Writer, runWriter, execWriter, tell)
 import Data.Either                (partitionEithers)
 import Data.Generics              (Data, everywhereM, extM, gmapM, extT)
+import Data.List                  (group, sort)
 import Data.Maybe                 (fromMaybe, catMaybes)
 import Data.Monoid                (Monoid(..))
 import Data.Traversable           (mapM)
@@ -130,6 +131,11 @@ parenthesize input = adjust (mkSMap $ Map.fromListWith (++) subs) output
     -- The default case is to add parenthesis!
     doExpr x = giveParen x
 
+{-
+    doType (AppT l a@(AppT _ _ _) b) = AppT l <$> inside a <*> inside b
+    doType (AppT l a b)              = AppT l <$> outside a <*> inside b
+-}
+
     giveParen x = do
       let (SrcSpanInfo sp@(SrcSpan file sl sc el ec) _) = ann x
           is = [ SrcSpan file sl sc sl (sc+1)
@@ -157,6 +163,8 @@ parseWithFixities mode code = case parseWithMode mode code of
             . mapM (either
                 (\n -> fmap (n,) <$> TH.lookupTypeName  (showName n))
                 (\n -> fmap (n,) <$> TH.lookupValueName (showName n)))
+            . Set.toList . Set.fromList
+            . map sQName
             . execWriter $ everywhereM getInfix parsed
     err -> return err
   where
@@ -173,9 +181,7 @@ parseWithFixities mode code = case parseWithMode mode code of
     getInfixA x                          =                    return x
     getInfixE x@(PInfixApp  _ _ n _)     = tell [Right n]  >> return x
     getInfixE x                          =                    return x
-    getInfixM x@(InfixMatch _ _ n _ _ _) = tell [Right qn] >> return x
-      where
-        qn = UnQual (ann n) n
+    getInfixM x@(InfixMatch _ _ n _ _ _) = tell [Right qn] >> return x where qn = UnQual (ann n) n
     getInfixM x                          =                    return x
     getInfixO x@(QConOp       _ n)       = tell [Right n]  >> return x
     getInfixO x@(QVarOp       _ n)       = tell [Right n]  >> return x
